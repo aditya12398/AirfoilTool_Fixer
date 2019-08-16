@@ -16,21 +16,21 @@ void translate(double tr_x, double tr_y)
     y = y + tr_y;
 }
 
-void trailing_edge_point(string name)
+void trailing_edge_point(string name, int line)
 {
     double a1, a2, b1, b2, c1, c2;
     double x_trailing, y_trailing;
     double x_old, y_old, x_new, y_new;
     int count = 1;
-    x_old = y_old = NULL;
-    ifstream infile("1" + name);
-    ofstream outfile("2" + name);
-    while (infile)
+    x_old = y_old = -10000;
+    ifstream infile("1_" + name);
+    for (int i = 1; i <= line; i++)
     {
-        if (x_old == NULL)
+        infile >> x >> y;
+        if (x_old == -10000)
         {
-            x_old = x;
-            y_old = y;
+            x_new = x_old = x;
+            y_new = y_old = y;
         }
         else
         {
@@ -47,20 +47,33 @@ void trailing_edge_point(string name)
         }
         count++;
     }
+    infile.close();
+    ifstream infile2("1_" + name);
+    ofstream outfile("2_" + name);
     a2 = (y_old - y_new);
     b2 = (x_new - x_old);
     c2 = (x_new - x_old) * y_old - (y_new - y_old) * x_old;
     double det = a1 * b2 - a2 * b1;
     x_trailing = (b2 * c1 - b1 * c2) / det;
     y_trailing = (a1 * c2 - a2 * c1) / det;
+    outfile << line + 2 << endl;
+    outfile << x_trailing << "\t" << y_trailing << "\t" << z << "\n";
+    for (int i = 1; i <= line; i++)
+    {
+        infile2 >> x >> y;
+        outfile << x << "\t" << y << "\t" << z << "\n";
+    }
+    outfile << x_trailing << "\t" << y_trailing << "\t" << z;
+    infile2.close();
+    outfile.close();
 }
 
 int main()
 {
-    int l, scale_flag = 0, translate_flag = 0;
+    int line = 0, scale_flag = 0, translate_flag = 0;
     double tr_x, tr_y, scale_factor;
     double x_old, y_old, x_new, y_new;
-    x_old = y_old = NULL;
+    x_old = y_old = -10000;
     string name, outname;
 
     cout << "Enter the filename with extension: ";
@@ -84,15 +97,16 @@ int main()
         cout << "Enter y translate value: ";
         cin >> tr_y;
     }
-    while (infile)
+    while (!infile.eof())
     {
+        line++;
         infile >> x >> y;
         if (scale_flag != 0)
             scale(scale_factor);
         if (translate_flag != 0)
             translate(tr_x, tr_y);
         outfile << x << "\t" << y << "\n";
-        if (x_old == NULL)
+        if (x_old == -10000)
         {
             x_old = x;
             y_old = y;
@@ -103,7 +117,9 @@ int main()
             y_new = y;
         }
     }
+    infile.close();
+    outfile.close();
     if (x_new != x_old || y_new != y_old)
-        trailing_edge_point(name);
+        trailing_edge_point(name, line);
     return 0;
 }
