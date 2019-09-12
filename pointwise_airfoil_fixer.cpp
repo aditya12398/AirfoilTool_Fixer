@@ -45,6 +45,14 @@ double trailing_edge_point(std::string name, int line)
     b2 = (x_new - x_old);
     c2 = (x_new - x_old) * y_old - (y_new - y_old) * x_old;
     double det = a1 * b2 - a2 * b1;
+    if (det == 0)
+    {
+        std::cout << "The determinent is zero, cannot form a trailing edge point\nPossible error, end lines are parallel.\n";
+        std::cout << "a1 = " << a1 << "\tb1 = " << b1 << "\tc1 = " << c1 <<std::endl;
+        std::cout << "a2 = " << a2 << "\tb2 = " << b2 << "\tc2 = " << c2 <<std::endl;
+        std::cout << "Exiting...\n";
+        exit(0);
+    }
     x_trailing = (b2 * c1 - b1 * c2) / det;
     y_trailing = (a1 * c2 - a2 * c1) / det;
     if (fabs(x_trailing) <= 1E-12)
