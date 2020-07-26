@@ -115,6 +115,7 @@ int main()
         }
     }
     infile.close();
+    std::cout << line <<std::endl;
     if (x_new != x_old || y_new != y_old)
         length = trailing_edge_point(name, line);
     else
